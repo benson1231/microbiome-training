@@ -1,0 +1,9 @@
+services:
+  qiime2:
+    image: quay.io/qiime2/amplicon:2025.10
+    container_name: qiime2-amplicon
+    volumes:
+      - .:/data
+    working_dir: /data
+    stdin_open: true
+    tty: true

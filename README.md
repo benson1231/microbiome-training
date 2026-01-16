@@ -6,3 +6,11 @@
 ```bash
 docker compose run --rm qiime2 bash
 ```
+
+## export `qzv` `qza` file
+
+```bash
+qiime tools export \
+  --input-path FILE-PATH \
+  --output-path OUTPUT-PATH
+```

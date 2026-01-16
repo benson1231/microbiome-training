@@ -75,7 +75,7 @@ qiime boots kmer-diversity \
   --p-replacement \
   --p-alpha-average-method median \
   --p-beta-average-method medoid \
-  --output-dir resultsboots-kmer-diversity
+  --output-dir results/boots-kmer-diversity
 
 # Create alpha-rarefaction
 qiime diversity alpha-rarefaction \

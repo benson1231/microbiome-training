@@ -1,16 +1,22 @@
 #!/bin/bash
 
-# Create sample-metadata.qzv
+# https://amplicon-docs.qiime2.org/en/stable/tutorials/gut-to-soil.html
+
+# Create results directory
+mkdir -p results
+
+# Create sample-metadata.qzv for qiime2 view
 qiime metadata tabulate \
   --m-input-file data/sample-metadata.tsv \
   --o-visualization results/sample-metadata.qzv
 
-# QC
+# Create demultiplexed sequence QC summary
 qiime demux summarize \
   --i-data data/demux.qza \
   --o-visualization results/demux.qzv
 
-# DADA2
+# ============================================================
+# Use DADA2 for ASV denoising
 qiime dada2 denoise-paired \
   --i-demultiplexed-seqs data/demux.qza \
   --p-trim-left-f 0 \
@@ -22,12 +28,12 @@ qiime dada2 denoise-paired \
   --o-denoising-stats results/denoising-stats.qza \
   --o-base-transition-stats results/base-transition-stats.qza
 
-# Create denoising-stats.qzv
+# DADA2 results visualization
 qiime metadata tabulate \
   --m-input-file results/denoising-stats.qza \
   --o-visualization results/denoising-stats.qzv
 
-# Create asv-table.qzv
+# Create ASV table
 qiime feature-table summarize-plus \
   --i-table results/asv-table.qza \
   --m-metadata-file data/sample-metadata.tsv \
@@ -35,24 +41,34 @@ qiime feature-table summarize-plus \
   --o-sample-frequencies results/sample-frequencies.qza \
   --o-feature-frequencies results/asv-frequencies.qza
 
-# Create asv-seqs.qzv
+# ASV table visualization
 qiime feature-table tabulate-seqs \
   --i-data results/asv-seqs.qza \
   --m-metadata-file results/asv-frequencies.qza \
   --o-visualization results/asv-seqs.qzv
 
-# Create asv-table-ms2.qza
+# ============================================================
+# Filter features
 qiime feature-table filter-features \
   --i-table results/asv-table.qza \
   --p-min-samples 2 \
   --o-filtered-table results/asv-table-ms2.qza
 
-# Create asv-seqs-ms2.qza
+# Filter sequences only on filtered features
 qiime feature-table filter-seqs \
   --i-data results/asv-seqs.qza \
   --i-table results/asv-table-ms2.qza \
   --o-filtered-data results/asv-seqs-ms2.qza
 
+# Summarize filtered table
+qiime feature-table summarize-plus \
+  --i-table results/asv-table-ms2.qza \
+  --m-metadata-file data/sample-metadata.tsv \
+  --o-summary results/asv-table-ms2.qzv \
+  --o-sample-frequencies results/sample-frequencies-ms2.qza \
+  --o-feature-frequencies results/asv-frequencies-ms2.qza
+
+# ============================================================
 # Create taxonomy.qza
 qiime feature-classifier classify-sklearn \
   --i-classifier data/suboptimal-16S-rRNA-classifier.qza \
@@ -65,6 +81,7 @@ qiime feature-table tabulate-seqs \
   --i-taxonomy results/taxonomy.qza \
   --o-visualization results/asv-seqs-ms2.qzv
 
+# ============================================================
 # Create boots-kmer-diversity
 qiime boots kmer-diversity \
   --i-table results/asv-table-ms2.qza \
@@ -84,14 +101,15 @@ qiime diversity alpha-rarefaction \
   --m-metadata-file data/sample-metadata.tsv \
   --o-visualization results/alpha-rarefaction.qzv
 
-# Create taxa-bar-plots
+# Create Taxonomic bar plots
 qiime taxa barplot \
   --i-table results/asv-table-ms2.qza \
   --i-taxonomy results/taxonomy.qza \
   --m-metadata-file data/sample-metadata.tsv \
   --o-visualization results/taxa-bar-plots.qzv
 
-# Create asv-table-ms2-dominant-sample-types
+# ============================================================
+# Differential abundance testing with ANCOM-BC2
 qiime feature-table filter-samples \
   --i-table results/asv-table-ms2.qza \
   --m-metadata-file data/sample-metadata.tsv \

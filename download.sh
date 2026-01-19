@@ -1,23 +1,11 @@
 #!/bin/bash
-# ============================================================
-# This script downloads example data used in the QIIME 2
-#
-# The files include:
-#   1. Sample metadata (TSV format)
-#   2. Demultiplexed sequencing data (QIIME 2 artifact)
-#   3. A pre-trained 16S rRNA taxonomic classifier
-# ============================================================
 
-# It is recommended to create the data directory beforehand
-mkdir -p data
+mkdir -p gut-to-soil/data
 
-# ------------------------------------------------------------
-# Download sample metadata
-# - File format: TSV
-# - Purpose: Provides sample-level information required by
-#   QIIME 2 (e.g., sample IDs, experimental groups, environments)
-# ------------------------------------------------------------
-wget -O 'data/sample-metadata.tsv' \
+# ============================================================
+# gut-to-soil
+# ============================================================
+wget -O 'gut-to-soil/data/sample-metadata.tsv' \
   'https://gut-to-soil-tutorial.readthedocs.io/en/latest/data/gut-to-soil/sample-metadata.tsv'
 
 # ------------------------------------------------------------
@@ -26,7 +14,7 @@ wget -O 'data/sample-metadata.tsv' \
 # - Content: Sequencing reads already split by sample barcodes
 # - Purpose: Input for downstream steps such as DADA2 or Deblur
 # ------------------------------------------------------------
-wget -O 'data/demux.qza' \
+wget -O 'gut-to-soil/data/demux.qza' \
   'https://gut-to-soil-tutorial.readthedocs.io/en/latest/data/gut-to-soil/demux.qza'
 
 # ------------------------------------------------------------
@@ -38,5 +26,22 @@ wget -O 'data/demux.qza' \
 #         For real analyses, use a classifier trained on the
 #         appropriate region and reference database.
 # ------------------------------------------------------------
-wget -O 'data/suboptimal-16S-rRNA-classifier.qza' \
+wget -O 'gut-to-soil/data/suboptimal-16S-rRNA-classifier.qza' \
   'https://gut-to-soil-tutorial.readthedocs.io/en/latest/data/gut-to-soil/suboptimal-16S-rRNA-classifier.qza'
+
+
+# ============================================================
+# moving-pictures
+# ============================================================
+mkdir -p moving-pictures/data
+
+wget -O 'moving-pictures/data/sample-metadata.tsv' \
+  'https://moving-pictures-tutorial.readthedocs.io/en/latest/data/moving-pictures/sample-metadata.tsv'
+
+wget -O 'moving-pictures/data/emp-single-end-sequences.zip' \
+  'https://moving-pictures-tutorial.readthedocs.io/en/latest/data/moving-pictures/emp-single-end-sequences.zip'
+
+unzip -d moving-pictures/data/emp-single-end-sequences moving-pictures/data/emp-single-end-sequences.zip
+
+wget -O 'moving-pictures/data/gg-13-8-99-515-806-nb-classifier.qza' \
+  'https://moving-pictures-tutorial.readthedocs.io/en/latest/data/moving-pictures/gg-13-8-99-515-806-nb-classifier.qza'
